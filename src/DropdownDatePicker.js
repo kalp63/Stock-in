@@ -23,6 +23,7 @@ const DropdownDatePicker = ({ selectedExpiryDate, onExpiryDateChange }) => {
   useEffect(() => {
     document.addEventListener("keydown", hideOnEscape, true);
     document.addEventListener("click", hideOnClickOutside, true);
+    
   }, []);
 
   const hideOnEscape = (e) => {
@@ -70,6 +71,7 @@ const DropdownDatePicker = ({ selectedExpiryDate, onExpiryDateChange }) => {
               direction="horizontal"
               className="calendarElement small"
               minDate={new Date()} // Set minDate to today to restrict past dates only
+              
             />
             <div className="buttonContainer">
               <button onClick={applyDateRange} className="applyButton">

@@ -17,6 +17,7 @@ function App({ onLogout }) {
   const [selectedExpiryDate, setSelectedExpiryDate] = useState();
   const [submittedData, setSubmittedData] = useState([]);
   const [additionalBoxCount, setAdditionalBoxCount] = useState(0);
+  const [skuDropdownError, setSkuDropdownError] = useState("");
 
   const handleAdditionalBoxChange = (index, field, value) => {
     setAdditionalBoxes((prevBoxes) => {
@@ -28,7 +29,18 @@ function App({ onLogout }) {
       return updatedBoxes;
     });
   };
-                                                                         
+
+  const handleClear = () => {
+    setSelectedWarehouse({ value: "", label: "select" });
+    setTextBoxValue("");
+    setInwardQty("");
+    setAdditionalBoxes([]);
+    setSelectedExpiryDate(null);
+    setSubmittedData([]);
+    setAdditionalBoxCount(0);
+    setSkuDropdownError("");
+  };
+
   const handleAddBox = () => {
     setAdditionalBoxes((prevBoxes) => [
       ...prevBoxes,
@@ -135,14 +147,18 @@ function App({ onLogout }) {
   };
 
   const handleWarehouseDropdownChange = async (selectedOption) => {
+    // Reset the error message when a new option is selected
+    setSkuDropdownError("");
     setSelectedWarehouse(selectedOption);
     setOffset(0);
     setData(null);
   };
 
   const handleTextBoxChange = (event) => {
-    const value = event.target.value;
-    setTextBoxValue(value);
+    const input = event.target.value;
+    setTextBoxValue(
+      input === "" ? "" : input.startsWith("#") ? input : `#${input}`
+    );
   };
 
   const handleInwardQtyChange = (event) => {
@@ -155,7 +171,14 @@ function App({ onLogout }) {
   };
 
   // submit API
+
   const handleSubmit = async () => {
+    // Check if a valid SKU is selected
+    if (!selectedWarehouse.value) {
+      setSkuDropdownError("Please select a valid Product SKU.");
+      return;
+    }
+
     if (!textBoxValue || !inwardQty) {
       alert("Please enter values for Batch Number and Inward Quantity.");
       return;
@@ -240,6 +263,11 @@ function App({ onLogout }) {
               loadOptions={loadWarehouseOptions}
               className="dropdown-select"
             />
+            {skuDropdownError && (
+              <p style={{ color: "red", marginTop: "5px" }}>
+                {skuDropdownError}
+              </p>
+            )}
           </div>
         </div>
         <div>
@@ -247,7 +275,7 @@ function App({ onLogout }) {
           <input
             type="text"
             style={{ height: "33px" }}
-            value={Number(textBoxValue) ? `#${textBoxValue}` : textBoxValue}
+            value={textBoxValue}
             onChange={handleTextBoxChange}
             placeholder="Type here.."
           />
@@ -293,11 +321,7 @@ function App({ onLogout }) {
               <input
                 type="text"
                 style={{ height: "33px" }}
-                value={
-                  Number(box.textBoxValue)
-                    ? `#${box.textBoxValue}`
-                    : box.textBoxValue
-                }
+                value={box.textBoxValue}
                 onChange={(event) =>
                   handleAdditionalBoxChange(
                     index,
@@ -340,7 +364,9 @@ function App({ onLogout }) {
 
       <div style={{ marginTop: "10px" }}>
         <button onClick={handleAddBox}>+</button>
-        <button style={{ marginLeft: "330px" }}>cancel</button>
+        <button style={{ marginLeft: "330px" }} onClick={handleClear}>
+          clear
+        </button>
         <button style={{ marginLeft: "20px" }} onClick={handleSubmit}>
           Submit
         </button>

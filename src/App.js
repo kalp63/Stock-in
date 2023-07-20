@@ -28,9 +28,7 @@ function App({ onLogout }) {
       return updatedBoxes;
     });
   };
-
-
-  
+                                                                         
   const handleAddBox = () => {
     setAdditionalBoxes((prevBoxes) => [
       ...prevBoxes,

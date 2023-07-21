@@ -178,6 +178,10 @@ function App({ onLogout }) {
       setSkuDropdownError("Please select a valid Product SKU.");
       return;
     }
+    if (!selectedWarehouse.value) {
+      setSkuDropdownError("Please select a valid Product SKU.");
+      return;
+    }
 
     if (!textBoxValue || !inwardQty) {
       alert("Please enter values for Batch Number and Inward Quantity.");
@@ -297,6 +301,7 @@ function App({ onLogout }) {
             placeholder="Type here..."
           />
         </div>
+        
       </div>
       {additionalBoxes.length > 0 &&
         additionalBoxes.map((box, index) => (
